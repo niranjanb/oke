@@ -17,15 +17,16 @@ Most information extraction systems target binary relations hat were explicitly 
 
 To effectively address these issues, extraction systems need background knowledge that provide models or expectations for the information they need to extract. For example models of salient aspects of certain types of entities (e.g., actors {\em act in} movies, actors {\em win} awards) can help extract and organize information about people. Similarly, rich descriptions of events or scenarios, processes and their interactions can help in extracting and understanding information about events from texts. Scalable methods for acquiring such background knowledge is essential for building broad coverage extractors.
 
-Template-driven extraction aims to address these issues by pre-specifying an extraction template for each event type (e.g., arrest, arson, bombing). The template describes an event type in terms of the actors and the roles they play within the event. Figure~\ref{fig:arrest} shows an example arrest template (or schema).  The key actors are an arresting agent who arrests and charges a suspect, a lawyer who represents the suspect and a judge who rules on the case. 
-\begin{wrapfigure}{lh}{0.5\textwidth}
+Template-driven extraction aims to address these issues by pre-specifying an extraction template for each event type (e.g., arrest, arson, bombing). The template describes an event type in terms of the actors and the roles they play within the event. Figure~\ref{fig:arrest} shows an example arrest template (or schema).  
+\begin{wrapfigure}{lh}{0.4\textwidth}
 	\vspace{-2ex}
 	\begin{center}
 	\includegraphics[width=2.5in,height=2in]{figures/arrest-scenario} 	
-	\vspace{-2ex}
-	\caption{\label{fig:arrest} {\small Arrest schema: A model for an arrest scenario including key actors, the police, the suspect, judge etc. and their roles.}}
+	\caption{\label{fig:arrest} {Arrest schema: A model for an arrest scenario with the key actors and their roles.}}
 	\end{center}
 \end{wrapfigure}
+The key actors are an arresting agent who arrests and charges a suspect, a lawyer who represents the suspect and a judge who rules on the case. 
+
 However, templates are fundamentally limited by the cost of manual authoring. Chambers and Jurafsky (2009) developed an automatic method for generating event schemas that scaled to arbitrary domains but used a simple representation that resulted in schemas that were mostly incoherent because they mixed distinct events (e.g., fire spreading vs. disease spreading). 
 
 In this work, we target extraction of rich schemas that describe events using a range of information as shown in the table below.
