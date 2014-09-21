@@ -1,7 +1,7 @@
 % !TEX root =  main.tex
 \section{Open-domain Event Schemas}
 
-Event schemas specify the typical participants in an event, their roles within the schema. In this section, we describe our proposed approach for automatically constructing open-domain schemas from a large corpora. Our approach builds on our preliminary work for generating schemas. The key intuition behind our approach is that frequently co-mentioned entities and relations can be generalized to capture typical participants and their roles within the schema. Accordingly we develop a simple model for capturing co-occurring relations (Rel-grams) and a page-rank based solution for grouping relations belonging to a schema. Figure~\ref{fig:schema-generation} shows the architecture of our system. 
+Event schemas specify the typical participants in an event, their roles within the schema. In this section, we describe our proposed approach for automatically constructing open-domain schemas from a large corpora. Our approach builds on our preliminary work for generating schemas. The key premise behind our approach is that frequently co-mentioned entities and relations can be generalized to capture typical participants and their roles within the schema. Figure~\ref{fig:schema-generation} shows the architecture of our system developed based on this premise. 
 \begin{figure}[htbp]
 \vspace{-2ex}
 \begin{center}
@@ -17,7 +17,8 @@ There are several fundamental challenges in all stages of the pipeline. In this 
  
 \subsection{Extraction}
 
-The first stage in our pipeline involves extracting and representing event mentions from text. Representing information in sentences using extractions is an inherently lossy procedure. On the other hand retaining all information in a sentence doesn't scale well. Our preliminary work showed that one of the fundamental challenges in learning schemas from text is the context vs. sparsity trade-off in representation. Previous approaches used extremely limited context to represent events using (subject, verb) and (verb, object) pairs (e.g., Chambers and Jurafsky, 2009). Using such limited representations lead to incoherent schemas which mix distinct events. On the other hand, capturing more context using entire relation triples of the form (arg1, relation, arg2) leads to improved results. However, we still find that using a representation that is close to the source text has two fundamental sparsity problems: 1) Using specific mentions of events doesn't provide any generalization power. 2) Syntactic and lexical variability can mislead the system into treating the different mentions of the same event as separate events. 
+The first stage in our pipeline involves extracting and representing event mentions from text. Using extractions to represent information in sentences is lossy. On the other hand retaining all information in a sentence doesn't scale well. Previous automatic approaches used extremely limited context to represent events using (subject, verb) and (verb, object) pairs (e.g., Chambers and Jurafsky, 2009). Using such limited representations mitigate sparsity but lead to incoherent schemas which mix distinct events. Also, even with a more specific representation, such as an (arg1, relation, arg2) triple, is still close to the source text and raises two fundamental sparsity problems: 1) Using specific mentions of events doesn't provide any generalization power. 2) Syntactic and lexical variability can mislead the system into treating the different mentions of the same event as separate events. 
+%Our preliminary work showed that one of the fundamental challenges in learning schemas from text is the context vs. sparsity trade-off in representation. On the other hand, capturing more context using entire relation triples of the form (arg1, relation, arg2) leads to improved results. However, w
 
 To address these challenges, we propose to explore the combination of Open IE extractions with semantic role annotations. Semantic roles present a nice intermediate between ontology-free Open-IE and tight semantic ontology in closed IE systems. The thematic roles sought by SRL systems are general purpose roles that apply to a wide variety of relations. The key advantage with semantic roles is that unlike Open IE arguments, semantic role assignments are not susceptible to simple syntactic transformation and because the arguments are thematic roles, it is easy to encode N-ary relations compactly. We plan to use one of the many off-the-shelf implementations (e.g., Clear SRL~\cite{}, SemaPro~\cite{}) available\footnote{While accuracy of role labeling is important, less than perfect role labeling is not problematic in our architecture, since the roles only serve to provide a normalized argument structure -- the name of the role itself is not particularly relevant.}. 
 
@@ -28,7 +29,7 @@ Extractions yield information about specific mentions. Generalizing from these s
 {\textbf Ontology} In this work, we will leverage existing resources such as Freebase, NELL and WordNet for constructing the ontology for entities and relations. Freebase is a crowd-sourced and curated knowledge base that contains more than 43,000 types (i.e., classes)~\footnote{as of September 1st, 2014.}. Entity classification systems~\cite{xiao}, entity linking systems~\cite{tlin}, and relation extraction systems~\cite{multir} have been developed to identify instances of Freebase types. These provide a great starting 
 point for mapping named entities and some subset of relations into Freebase. Events also involve common noun arguments (e.g, The fire burned down {\em the entire condominium} in 2 hours.). It is important to be able to generalize {\em condominiums} to its class {\em building}. We use Wordnet type hierarchy to assign classes to common nouns.
 
-The ontologies, as the name implies, are hierarchies of classes. Determining what an appropriate level of generalization is a tricky problem. In our preliminary work we created multiple entires one for each type in the hierarchy up to the root. In addition to being inefficient, this method cannot be tuned to select a desired level of generalization. We propose to investigate prior work on selectional preferences and class models~\cite{} to determine the appropriate class assignment given an extraction.
+The ontologies, as the name implies, are hierarchies of classes. Determining the appropriate level of generalization is a difficult problem. In our preliminary work we created multiple entires one for each type in the hierarchy up to the root. In addition to being inefficient, this method cannot be tuned to select a desired level of generalization. We propose to investigate prior work on selectional preferences and class models~\cite{} to determine the appropriate class assignment given an extraction.
  
 \subsection{Co-occurrence Modeling}
 
@@ -46,15 +47,26 @@ We propose to explore a probabilistic generative model for seed selection. Given
 
 \textbf{Graph Analysis} 
 
-The seed-based schema generation approach has two steps.
+We propose to investigate principled approaches for selecting the relations to include in a schema. 
+The neighborhood of a seed relation is a directed weighted graph. The problem of selecting the best of nodes around the seed is a classic reachability problem that can be formulated in many ways.  Based on our preliminary work, we identify two main challenges that an effective formulation should address: 1) Pruning relations that are overly general and occur in many scenarios, and 2) Avoiding topic and sense drift.   
 
+To this end, we propose to investigate graph-based formulations that leverage both properties of the graph as well as lexical properties about the relations. Graphical properties such as weights on the edges, connectivity of the nodes, and connectivity to the seed (or other central relations) all provide valuable information in detecting overly general relations, which co-occur with many other relations. 
+Lexical similarity measures (e.g., word2vec similarity) over the generalized relations, and context models of the top entities can further help detect topic drift.  
+
+The graphical properties such as the weights on the edges, the connectivity of the nodes, and the connectivity to the seed (or other central relations) can all be used as features.
+We propose to investigate methods that specifically address the topic-drift issue. In addition to the graph structure induced by the co-occurrence model, we will also investigate methods that can use the lexical similarity between the relations can also be used to detect topic drift. Recent approaches such as PRA~\cite{} show promise for the viability of graph-based approaches to combine multiple types of features. 
+
+To output a schema, we resolve entities and relations that are co-referent. We will rely on existing co-reference systems (e.g. Stanford Co-ref~\cite{}) to provide co-reference. At this stage we can to some extent also recover from co-reference errors if they end up resulting in merging entities with incompatible types. Similar intuitions have been successful in recent approaches for joint entity linking and co-reference resolution~\cite{}. 
+
+Lastly, we also develop a scoring mechanism that can identify good schemas. Following the tradition of Open IE approaches, we will develop a learning-based approach using small amounts of manually annotated schemas. 
 
 \subsection{Contributions}
 
+To summarize, in the phase of the project we propose to design a representation that leverages existing large scale ontologies, use scalable extraction techniques that combine open information extraction with semantic role labeling, and develop principled graph-based solutions for identifying seed relations, and constructing schemas. Upon successful completion, the key contributions of this phase will include:
 \begin{itemize}
-\item Effective representation which captures adequate context to unambiguously represent event semantics. 
+\item An effective representation which captures adequate context to unambiguously represent event semantics. 
 \item Generalization techniques that address sparsity. 
-\item Graph-based approaches that leverage graphical properties to address sense and topic-drift. 
+\item Graph-based approaches that leverage graphical properties to address topic-drift. 
 \item Scalable method for effectively scoring generated schemas. 
 \end{itemize}
 
