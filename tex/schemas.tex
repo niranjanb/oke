@@ -42,10 +42,7 @@ The are two main challenges in building schemas: 1) Identifying useful seeds or 
 
 \textbf{Seeding Schemas} The pairwise co-occurrences represent a large graph where the generalized relations are nodes and co-occurrences specify edge weights. In this setting, a direct approach to gathering co-mentioned relations is to perform clustering over this graph (either bottom-up or top-down). Instead we propose to investigate a seed-based expansion approach, which has several key benefits: a) Avoids the problem of large clusters resulting from hub nodes that are general purpose relations (e.g., {\em father of}, {\em spokesperson for}). b) Allows local structure around nodes to govern the inclusion in schema, which makes it easier to design selection algorithms.  c) Allows for an on-demand clustering of graph given any starting point. As we will point out later this flexibility is desirable for both development purposes (control for the seeds), as well as for use in applications which can provide an effective circumscription of the graph based on their input.
 
-In this work 
-If the co-occurrence model is defined with correct probabilistic semantics, the we can construct a generative probabilistic model that can guide the seed selection via well defined probabilistic measure that approximate qualities such as perplexity of observing the neighboring nodes. 
- 
-We will explore a generative probabilistic model that allows for selecting seeds that cover diverse events, as well as providing strong anchors for building schemas. 
+We propose to explore a probabilistic generative model for seed selection. Given a co-occurrence model with appropriate probabilistic semantics, we can directly construct a generative probabilistic model, which specifies the probability of observing other relations having observed a specific relation. The quality of a seed can be approximated by the quality of the distribution governing its neighborhood (e.g., perplexity of observing the neighboring nodes). selecting seeds that cover diverse events, as well as providing strong anchors for building schemas. 
 
 \textbf{Graph Analysis} 
 
