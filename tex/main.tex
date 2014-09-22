@@ -9,12 +9,26 @@
 \usepackage{amssymb}
 
 \newcommand{\eat}[1]{}
-
+\input{pgformat}
 \begin{document}
 \include{weld-defns}
 \title{Open-domain Knowledge Extraction}
 \author{Niranjan Balasubramanian}
 \maketitle
+\newpage
+
+\noindent
+\thispagestyle{empty}
+\input{summary}     % A. Project Summary - 1 page
+\newpage
+\tableofcontents    % B. Form 1359
+\thispagestyle{empty}
+\setcounter{section}{0}
+\setcounter{page}{0}
+
+\newpage
+%
+\setcounter{page}{1}
 
 \include{intro}
 \include{background}
