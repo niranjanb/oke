@@ -1,11 +1,22 @@
 % !TEX root =  main.tex
-\section{Extractors for Schemas}
+\section{Event Extraction}
 
-\subsection{Approach}
+Schemas can be used as templates to guide extraction about events or scenarios. MUC templates have been used to drive extraction of information into pre-defined slots. For example, the following is an arrest template, which specifies slots into which entities are to be extracted.
 
-\subsection{Precision/Recall Trade-off}
+Schemas are a set of generalized relations between the participants in events and can be viewed as high precision extractors. Each generalized relation in a schema specifies an extraction pattern. Our preliminary work suggests that using schemas directly will result in low recall. 
 
-\subsection{Contributions}
+We propose to investigate methods that bootstrap extractors from the schemas and the original extractions that were used to construct the schemas in the first place. Event extraction then becomes the task of aggregating the relations into event mentions. This is a two step process, where we first identify the schema that is to be invoked given the relations in the document and then mapping the relations and the entities into the schema. 
+
+
+%We can construct extractors for each relation independently and then learn a joint model from the individual extractors, which respects consistency constraints specified over the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. 
+
+The other key challenge in template-based event extraction is identifying the boundaries of events. Often times, multiple events of the same type are discussed. For example, a news article about a specific arson incident will often refer to previous arson incidents in the same area, which can potentially confuse extraction. This is a hard problem that is unlikely to be so
+
+%\subsection{Approach}
+
+%\subsection{Precision/Recall Trade-off}
+
+%\subsection{Contributions}
 
 \begin{itemize}
 \item Effective adaptations of distant supervision techniques for building extractors for schema elements.
