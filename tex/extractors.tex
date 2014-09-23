@@ -1,20 +1,53 @@
 % !TEX root =  main.tex
 \section{Event Extraction}
 
-Schemas can be used as templates to guide extraction about events or scenarios. MUC templates have been used to drive extraction of information into pre-defined slots. For example, the following is an arrest template, which specifies slots into which entities are to be extracted.
+Templates specify slots for extracting information about events or scenarios. For example, the following is an arrest template, which specifies the relevant pieces of extractable information about typical arrest events. 
+\begin{table}[htdp]
+\begin{center}
+\begin{tabular}{|p{2cm}|p{8cm}|p{4cm}|}
+\hline
+Slot & Description & Value\\
+\hline
+Agent & The authority that makes the arrest. & {\em London Police}\\
+Suspect & The person who was arrested. & {\em John Doe}\\
+Crime & The charge under which someone is arrested. & {\em robbery}\\
+Court  & The court where the suspect was produced. & {\em 8th District court, DC} \\ 
+Victim & The victim of the crime & {\em Jane Eyre}\\
+Lawyer & The lawyer representing the suspect. & {\em Fullerson}\\
+\hline
+Time & Time of arrest & Sept 18, 2014\\
+Location & Place arrested & Suspect's home\\
+\hline
+\end{tabular}
+\caption{Arrest Template}
+\end{center}
+\label{default}
+\end{table}%
 
-Schemas are a set of generalized relations between the participants in events and can be viewed as high precision extractors. Each generalized relation in a schema specifies an extraction pattern. Our preliminary work suggests that using schemas directly will result in low recall. 
+The schemas we generate include similar information and can be used to effectively guide extraction about events or scenarios. Recall that schemas specify the main entities and their roles as a set of generalized relations between the participants in events. Each generalized relation in a schema specifies an extraction pattern and thus the schema as a whole can be viewed as a high precision extractor. Our investigation shows that coverage of the extraction patterns is a key issue and using the schema as is will result in low recall. 
 
 \subsection{Method}
 We propose to investigate methods that bootstrap extractors from the schemas and the original extractions that were used to construct the schemas in the first place. Event extraction then becomes the task of aggregating the relations into event mentions. This is a two step process, where we first identify the schema that is to be invoked given the relations in the document and then map the relations and the entities into the schema. 
 
 Once we construct extractors for each relation independently, we can learn a joint extractor from the individual extractors which respects consistency constraints specified over the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. 
 
+\subsection{Evaluation}
 
-The other key challenge in template-based event extraction is identifying the boundaries of events. Often times, multiple events of the same type are discussed. For example, a news article about a specific arson incident will often refer to previous arson incidents in the same area, which can potentially confuse extraction. This is a hard problem that is unlikely to be solved within the scope of this project. However, we will 
+We will conduct evaluations on the MUC datasets for the limited number of domains but will also conduct evaluations on a crowd-source dataset created as part of schema curation. The evaluations will test both the mapping of schemas to the document as well as the accuracy of the extraction. The 
+The goals for evaluation are to benchmark the performance of using automatically generated schemas for event extraction and to shed light on the scalability and accuracy issues that arise in open-domain event extraction as opposed to prior evaluations using MUC which served to expose the limitations on a small set of targeted domains. 
+
+%The other key challenge in template-based event extraction is identifying the boundaries of events. Often times, multiple events of the same type are discussed. For example, a news article about a specific arson incident will often refer to previous arson incidents in the same area, which can potentially confuse extraction. This is a hard problem that is unlikely to be solved within the scope of this project.  
 
 
 %\subsection{Approach}
+%Schemas can be used as templates to guide extraction about events or scenarios. MUC templates have been used to drive extraction of information into pre-defined slots. For example, the following is an arrest template, which specifies slots into which entities are to be extracted.
+
+%Schemas are a set of generalized relations between the participants in events and can be viewed as high precision extractors. Each generalized relation in a schema specifies an extraction pattern. Our preliminary work suggests that using schemas directly will result in low recall. 
+
+%%As part of this work we will investigate methods that bootstrap extractors from the schemas. The original extractions from schemas are linked to the original extractions from which they were constructed
+
+%Event extraction then becomes the task of aggregating the relations into event mentions. This is a two step process, where we first identify the schema that is to be invoked given the relations in the document and then mapping the relations and the entities into the schema. 
+
 %We can construct extractors for each relation independently and then learn a joint model from the individual extractors, which respects consistency constraints specified over the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. 
 
 %\subsection{Precision/Recall Trade-off}
