@@ -1,8 +1,11 @@
 % !TEX root =  main.tex
-\section{Event Extraction}
+\section{\label{sec:extraction} Event Extraction}
 
-Templates specify slots for extracting information about events or scenarios. For example, the following is an arrest template, which specifies the relevant pieces of extractable information about typical arrest events. 
-\begin{table}[htdp]
+We focus on the end task of event extraction using the automatically generated schemas. The scope of this investigation will be limited to a) demonstrating the feasibility of event extraction using automatically constructed schemas, b) identifying the key issues and challenges in this application (to pursue for future work), and c) to keep the schema generation efforts grounded with respect to a specific application. 
+
+We propose a simple bootstrapping based extension to build extractors. 
+Prior template-driven extraction approaches (\cite{patwardhan-emnlp09}) use event templates to specify slots for extracting information about events or scenarios. The extraction systems were built by learning extractors for specific slots in each template. %For example, the table below shows an arrest template, which specifies the relevant pieces of extractable information about typical arrest events. 
+\eat{\begin{table}[htdp]
 \begin{center}
 \begin{tabular}{|p{2cm}|p{8cm}|p{4cm}|}
 \hline
@@ -19,22 +22,30 @@ Time & Time of arrest & Sept 18, 2014\\
 Location & Place arrested & Suspect's home\\
 \hline
 \end{tabular}
-\caption{Arrest Template}
 \end{center}
-\label{default}
 \end{table}%
+}
 
-The schemas we generate include similar information and can be used to effectively guide extraction about events or scenarios. Recall that schemas specify the main entities and their roles as a set of generalized relations between the participants in events. Each generalized relation in a schema specifies an extraction pattern and thus the schema as a whole can be viewed as a high precision extractor. Our investigation shows that coverage of the extraction patterns is a key issue and using the schema as is will result in low recall. 
+\subsection{Learning Extractors}
+The schemas we generate can be used as templates since they include similar information. Recall that schemas specify the main entities and their roles as a set of generalized relations between the participants in events. Each generalized relation in a schema specifies an extraction pattern and thus the schema as a whole can be viewed as a high precision extractor. Our preliminary investigation shows that coverage of the extraction patterns is a key issue and using the schema as is will result in low recall. We propose to investigate methods that bootstrap extractors from the schemas and the original extractions that were used to construct the schemas in the first place. With each schema we have recorded the original entities, the relations, as well as the source documents from which the relations were aggregated. The documents (and smaller text spans) can be used to construct pseudo-training data by annotating the appropriate text mentions. We can then train extractors using this pseudo-training data. 
 
-\subsection{Method}
-We propose to investigate methods that bootstrap extractors from the schemas and the original extractions that were used to construct the schemas in the first place. Event extraction then becomes the task of aggregating the relations into event mentions. This is a two step process, where we first identify the schema that is to be invoked given the relations in the document and then map the relations and the entities into the schema. 
-
-Once we construct extractors for each relation independently, we can learn a joint extractor from the individual extractors which respects consistency constraints specified over the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. 
+Extraction is a two-step process, which involves using the input document (text) to first identify which set of schemas can be used for extraction. Given a particular schema, we can use the individual relation extractors to identify relations and extract candidate mentions for the participants. The relations between the participants in the schema provide consistency constraints for a typical instantiation of the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. Finally, the extracted event can be scored using the confidences of the extractors as well as a measure of how well it satisfies the constraints specified by the schema.
 
 \subsection{Evaluation}
 
-We will conduct evaluations on the MUC datasets for the limited number of domains but will also conduct evaluations on a crowd-source dataset created as part of schema curation. The evaluations will test both the mapping of schemas to the document as well as the accuracy of the extraction. The 
-The goals for evaluation are to benchmark the performance of using automatically generated schemas for event extraction and to shed light on the scalability and accuracy issues that arise in open-domain event extraction as opposed to prior evaluations using MUC which served to expose the limitations on a small set of targeted domains. 
+We will conduct evaluations on the MUC datasets for the limited number of domains but will also conduct evaluations on a crowd-source dataset created as part of schema curation (see Section~\ref{sec:data-collection}). The evaluations will test both the mapping of schemas to the document as well as the accuracy of the extraction. The goals for evaluation are to benchmark the performance of using automatically generated schemas for event extraction and to shed light on the scalability and accuracy issues that arise in open-domain event extraction as opposed to prior MUC evaluations on a small domains. 
+
+\subsection{Contributions}
+\begin{itemize}[noitemsep,nolistsep]
+\item Effective bootstrapping techniques for building extractors for schema elements.
+\item Empirical evaluation of the accuracy of the extractors. 
+\end{itemize}
+
+
+%The main idea for extraction is to first use the general relation extraction pipeline to extract relations. Then, we identify the schema that is to be invoked given the relations in the document. A third and final step is to map the relations and their arguments into the schema and produce an aggregated extraction.
+
+%Once we construct extractors for each relation independently, we can learn a joint extractor from the individual extractors which respects consistency constraints specified over the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. 
+
 
 %The other key challenge in template-based event extraction is identifying the boundaries of events. Often times, multiple events of the same type are discussed. For example, a news article about a specific arson incident will often refer to previous arson incidents in the same area, which can potentially confuse extraction. This is a hard problem that is unlikely to be solved within the scope of this project.  
 
@@ -51,11 +62,4 @@ The goals for evaluation are to benchmark the performance of using automatically
 %We can construct extractors for each relation independently and then learn a joint model from the individual extractors, which respects consistency constraints specified over the schema. For example, in an arrest schema, we expect that the agent of a "arrest" relation to be different from the agent of a "appeared in court" relation. Similarly, we expect that the object of the "arrest" relation to be also the object of the "charged with" relation. 
 
 %\subsection{Precision/Recall Trade-off}
-
-\subsection{Contributions}
-
-\begin{itemize}
-\item Effective adaptations of distant supervision techniques for building extractors for schema elements.
-\item Empirical evaluation of the accuracy of the extractors. 
-\end{itemize}
 

@@ -1,25 +1,44 @@
 % !TEX root =  main.tex
 \section{Background}
+%Manually authoring such schemas are laborious and infeasible. Prior work on template-drive extraction technologies were limited to a small number of domains. 
+Event schemas (aka templates) specify the typical participants in an event and their roles within the schema. They provide useful background knowledge and guidance for several NLP tasks including information extraction~\cite{krupka-muc3,marsh-98}, summarization~\cite{owczarzak-tac10}, and co-reference resolution~\cite{irwin-cnll11}. In particular, template-driven extraction has a long history with a diverse set of techniques ranging from fully supervised learning approaches~\cite{chinchor1993evaluating,freitag1998toward,patwardhan-emnlp09}, to bootstrapping and hybrid approaches~\cite{surdeanu2006hybrid,huang2012bootstrapped}, most of which relied on a pre-specified set of schemas.
 
-Template-driven 
-
-\subsection{MUC Templates}
-
-
-
-\subsection{Automatic Methods}
-
-\textbf{C \& J, 2009}
-
-\textbf{C \& J, 2011}
-
-\textbf{C \& J, 2013}
-
-\textbf{Poon et al, 2013}
-
+Until recently much of these schemas were manually generated (e.g., MUC-4 templates~\cite{sundheim1992overview}). Chambers and Jurafsky~\cite{chambers-acl08,chambers-acl09,chambers-lrec10} developed domain-independent methods for constructing event schemas by mining verb chains that shared arguments. This work targeted narrative chains with simple (subject, object) or (verb, object) pairs as the representation. This seminal work showed the feasibility of corpus based approaches for generating schemas. Recent extensions explored probabilistic graphical models for inducing event schemas and applying them for extraction~\cite{chambers2013event,poon-naacl13}. The key idea is to jointly learn the schema elements and the corresponding extractors. However, in addition to their dependence on schema specific in-domain data, the fragmented representations used lead to coherence issues because they don't always capture adequate context for distinguishing distinct events (e.g. {\em fire} and {\em disease} spreading). 
 
 \subsection{Preliminary Work}
 
-\textbf{Rel-grams}
+\textbf{Rel-grams~\cite{balasubramanian-akbc12}}
+Our preliminary work on open-domain event knowledge, we modeled a what-follows type of common-sense knowledge about events. We built a simple model that can specify other events are likely to have happened given a particular event. To this end, we developed a probabilistic co-occurrence model, that we call Rel-grams, which specifies the probability of observing relation co-occurrences in text. A simple bi-gram model specified $P_k(R'|R)$, the probability that $R'$ follows $R$  within a distance $k$, as a delta-smoothed estimate: 
+\begin{align} 
+\vspace{-2ex}
+%\label{eqn:rlm}
+P_k(R'|R) &= \frac{\#(R,R',k) + \delta}{\#R + \delta \cdot |V|} 
+\vspace{-2ex}
+\end{align} 
+where, $\#(R, R', k)$ is the number of times $R'$ occurred within a distance $k$ from $R$ in a 
+document. An ad-hoc extension allows us to combine the co-occurrence probabilities within different windows: 
+\begin{align} 
+\vspace{-2ex}
+P(R'|R) &= \frac{\sum_{k=1}^{10} \alpha^k P_k(R'|R)}
+{\sum_{k=1}^{10} \alpha^k}
+\vspace{-2ex}
+\end{align} 
 
-\textbf{Schemas}
+Using Open IE relation triples, (arg1, relation, arg2), to represent events~\cite{fader-emnlp11}, we constructed a large database of more than 90 Million Rel-grams from a large corpus of 1.5 Million New York Times news articles. We also showed that Rel-grams define a relation graph that can be clustered to form the basis of generating schemas.  
+
+\textbf{Coherent Event Schemas~\cite{balasubramanian2013generating}} Building on the Rel-grams work, we developed a method for automatically generating schemas. The work built on key insights from Chambers and Jurafsky (2009), who showed that co-occurrence information mined from large corpora can be exploited to identify the key participants and their roles in events. However, our analysis of their output showed a challenging trade-off: Using more context improves representation power but also increases sparsity. Corpus-based approaches are reliant on observing the patterns of interest several times over the corpus. Using representations defined over smaller contexts helps obtain more reliable frequency estimates, but it also looses essential differentiating context sometimes, which can cause merging of information about distinct events and in some cases also merge distinct entities within the same schema.
+
+Our key contribution was in designing an Open IE based representation that captured enough context about the events to avoid ambiguities. To mitigate sparsity, we developed a simple yet effective generalization technique, that used a set of 30 semantic types. We devised a page-rank based algorithm that helped to identify relevant relations and prune out overly general relations that occurred in many scenarios.The generated Rel-grams (1M) and Schemas (2K) that have been made available to the community~\footnote{http://relgrams.cs.washington.edu}.  We developed a crowd-sourcing method to evaluate the automatically generated schemas. The evaluation showed that our approach led to more coherent schemas with a wider coverage of the participants. 
+
+\subsection{Research Challenges and Proposed Work}
+
+Rel-grams based schemas produced substantial improvements in schema coherence. However, many challenges and fundamental questions remain. First, despite the increased context provided by the relation triples, the representation still is quite close to the original source text which leads to sparsity due to syntactic and lexical variabilities in language. Second, the semantic types we used were manually selected, limited to a small set (30 types) and coarse grained. This leads to mixing arguments of different types (e.g, church and school were both typed as an organization). Third, the small scale evaluation only compared the quality of the {\em top ranked} schemas produced by the system, which mainly correspond to the most dominant domains in the corpus. The quality of the schemas as we scale to other domains is unknown. It is not clear how well corpus-driven approaches can scale. Last, our work focused mainly on generating schemas and does not include associated extractors. Lack of large-scale training data still remains a fundamental challenge for developing open-domain event extractors. 
+
+This proposal aims to tackle the significant challenges in automatically generating schemas and building event extractors. 
+To address these challenges, we propose the following:
+\begin{itemize}
+\item Develop corpus-based methods for automatically generating event schemas (Section~\ref{sec:schemas}).  
+\item Develop extraction methods that can use these automatically generated schemas as templates (Section~\ref{sec:extraction}). 
+\item Develop and release a large scale curated collection of event schemas and an evaluation dataset that can be used to build extractors (Section~\ref{sec:data-collection}).
+\end{itemize}
+

@@ -1,33 +1,31 @@
 % !TEX root =  main.tex
 \section{Development Plan and Timeline}
 
-The project will proceed in three phases. In the first phase of the project, we focus on the designing the representation and extracting information from large corpora using existing IE systems. We will design a rich representation for the targeted knowledge by leveraging existing ontologies for entities and relations (e.g., YAGO, NELL, Freeebase) where possible and using text derived representations in other places. Then, we will investigate techniques for aggregating and generalizing information in the specific instances. In particular, we will develop automatic methods for choosing the right level for mapping into a type hierarchy for the arguments and the relations. In the second phase, we will focus on graph-based approaches for generating open-domain schemas using the generalized extractions. In our preliminary work, we identified the graph properties that indicate specific characteristics for good schemas and developed a suitable method that exploited the graph properties to produce high-quality schemas. In the third phase, we will focus on applying the generated schemas to two end tasks: event extraction, and summarization. For event extraction we will build extractors. Schemas can be thought of as high-precision models of events, which can then be expanded to include higher-recall extractors via bootstrapping. For summarization, we will use schemas to help select sentences for the standard MUC single document summarization task. We will iterate and refine the schema representation and generation based on their performance in these end tasks.
+The project will proceed in three phases. In the first phase, we will design the representation and methods for schema generation. In the second phase, we will start curating the generated schemas and build extractors for the schemas, and in the third phase we will refine and make necessary adjustments to schema generation and finish the curation and release the resources. The research plan in calendar years is shown below:
+
+%In the first phase of the project, we focus on the designing the representation and extracting information from large corpora using existing IE systems. We will design a rich representation for the targeted knowledge by leveraging existing ontologies for entities and relations (e.g., YAGO, Freeebase) where possible and using text derived representations in other places. Then, we will investigate techniques for aggregating and generalizing information in the specific instances. In particular, we will develop automatic methods for choosing the right level for mapping into a type hierarchy for the arguments and the relations. In the second phase, we will focus on graph-based approaches for generating open-domain schemas using the generalized extractions. In our preliminary work, we identified the graph properties that indicate specific characteristics for good schemas and developed a suitable method that exploited the graph properties to produce high-quality schemas. In the third phase, we will focus on applying the generated schemas to two end tasks: event extraction, and summarization. For event extraction we will build extractors. Schemas can be thought of as high-precision models of events, which can then be expanded to include higher-recall extractors via bootstrapping. For summarization, we will use schemas to help select sentences for the standard MUC single document summarization task. We will iterate and refine the schema representation and generation based on their performance in these end tasks.
 
 Year 1:  
-\begin{enumerate}
-\item Design target Representation for Knowledge  Design representation manually based on use cases from target applications.
-\item Information Extraction and Aggregating existing knowledge. Annotate documents using Open IE and link entities to existing resources. Explore Generalization Techniques 
-Ñ Develop methods for generalize specific instances (e.g., John was arrested in Bristol, UK Ñ> [Person] arrested in [Location])
-\item Construct micro-theories using corpus analysis. Co-mentioned (and argument sharing) instances are likely part of some theory. Mechanical Turk Evaluation of Micro-Theories.
+\begin{enumerate}[noitemsep,nolistsep]
+\item Design representation manually based on use cases from target applications.
+\item Extract relations using Open IE + SRL and develop generalization techniques.
+\item Generate schemas using the generalized relations. 
 \end{enumerate}
-
 Year 2:
-\begin{enumerate}
-\item Relate micro-theories to each other 
-\item Inference over graphs to enhance recall and precision of theories..
-\item Iterative development w/ target application: 1) Apply learned theories to target application. 2) Recall is often an issue. Explore on demand construction of theory given a particular document. 
+\begin{enumerate}[noitemsep,nolistsep]
+\item Iterate on schema generation using improved techniques. 
+\item Curate generated schemas and create an evaluation dataset for extraction.
+\item Build extractors for the schemas. Evaluate and adjust schema generation and curation as necessary. 
 \end{enumerate}
 
 
 \section{Broader Impact}
-
-Event schemas directly impact many practical applications and provide a stepping stone for advances in knowledge-intensive AI applications. Businesses gather ever increasing amounts of data from customers and users via social platforms, analysts deal with increasing news volumes, researchers produce and consume vast amounts of knowledge through publications. All these diverse communities can benefit from scalable information extraction and summarization systems. Event schemas are an important step towards automatically building script-like knowledge from text, which can benefit knowledge-intensive AI applications such as reasoning and Question Answering. Furthermore, the method and techniques can scale to other domains and spur research on similar problems (e.g., extracting processes from textbooks, identifying schemas in research studies).
+Event schemas directly impact many practical applications and provide a stepping stone for advances in knowledge-intensive AI applications. Businesses gather ever increasing amounts of data from customers and users via social platforms, analysts deal with increasing news volumes, researchers produce and consume vast amounts of knowledge through publications. All these diverse communities can benefit from scalable information extraction and summarization systems. Event schemas are an important step towards automatically building script-like knowledge from text, which can benefit knowledge-intensive AI applications such as reasoning and Question Answering. The project aims to deliver a high-quality large scale resource for the research community to use and spur research on similar problems (e.g., extracting processes from textbooks, identifying schemas in research studies).
 
 \section{Curriculum Development Activities}
 
-I plan to teach a course centered around the core concepts of scalable information extraction and knowledge extraction techniques. 
-Most technology companies with a large web presence have a need for extracting information of one form or other from information obtained by engaging with their user base. This course will provide a basic overview of a distributed information extraction pipeline, persistence, and building applications that rely on the extracted data. 
+I plan to teach a course centered around the core concepts of scalable information extraction and knowledge extraction techniques. Most NLP-based technology companies and technology companies with a large web presence have a need for extracting information from their user engagement data. This course will provide a basic overview of a distributed information extraction pipeline, persistence, and building applications that rely on the extracted data. 
 
 \section{Prior NSF Support}
 
-\section{Data Management Plan}
+Dr. Niranjan Balasubramanian has broad expertise in information extraction, esp. in large scale knowledge generation and its application to complex NLP tasks but has not received prior support from NSF. 

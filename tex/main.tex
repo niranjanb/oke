@@ -1,4 +1,6 @@
-\documentclass[a4paper,11pt,onecolumn]{article}
+\documentclass[11pt,onecolumn]{article}
+\usepackage[T1]{fontenc}
+\usepackage{times}
 \usepackage[hscale=0.8,vscale=0.9]{geometry}
 \usepackage[parfill]{parskip}
 \usepackage{amsmath}
@@ -7,6 +9,7 @@
 \usepackage{subfigure}
 \usepackage{wrapfig}
 \usepackage{amssymb}
+\usepackage{enumitem}
 
 \newcommand{\eat}[1]{}
 \input{pgformat}
@@ -31,14 +34,15 @@
 \input{intro}
 \input{background}
 \input{schemas}
-\input{data-collection}
 \input{extractors}
+\input{data-collection}
+%\input{extractors}
 %\include{models}
 %\include{applications}
 \input{supporting}
  
 {\small
 \bibliographystyle{plain}
-\bibliography{../research-statement,../kia}
+\bibliography{kia,main}
 }
 \end{document}

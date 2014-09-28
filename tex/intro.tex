@@ -2,7 +2,7 @@
 \section{Introduction}
 \subsection{Motivation}
 
-Building systems that can understand and reason with information present in texts is a central pursuit in the AI vision. Extracting and understanding information in texts itself requires background knowledge. It is no surprise that documents written for human consumption assume background knowledge and an inference capability that reads between lines. For example, consider the following news snippet:
+Building systems that can understand and reason with information present in texts is a central pursuit in the AI vision. Extracting from texts is a challenging task in itself and requires access to open-domain knowledge. It is no surprise that these articles written for human consumption assume background knowledge and an inference capability that reads between lines. For example, consider extracting information from the following news snippet:
 
 \begin{verbatim}
         Somalia's al-Shabab militant group has confirmed the death 
@@ -11,26 +11,59 @@ Building systems that can understand and reason with information present in text
         Abu Ubeid Ahmed Omar to replace Abdi Godane. 
 \end{verbatim}
 
-Reading these two sentences, we can easily conclude that {\em Abdi Godane} was the leader of {\em al-Shabab}, which is a {\em terrorist group} and {\em Abu Ubeid Ahmed Omar} is the successor of {\em Abdi Godane}, and {\em Abdi Godane} was killed by a {\em U.S.} airstrike. None of this information is explicitly mentioned in the sentences but can be {\em easily} inferred by humans. However, this inference is not so {\em easy} for extraction systems. 
+Extraction systems need to be told what information to extract -- e.g, the one who gets replaced, the successor, the position being filled, the employing organization etc. Reading these two sentences, we can easily determine the important information: {\em Abdi Godane} was the leader of {\em al-Shabab}, which is a {\em terrorist group} and {\em Abu Ubeid Ahmed Omar} is the successor of {\em Abdi Godane}, and {\em Abdi Godane} was killed by a {\em U.S.} airstrike.  Further, none of this information is explicitly mentioned in the sentences. Further This kind of declarative knowledge in terms of the participants and their roles (e.g., the one who gets replaced, the successor, the position, the organization etc.) also provides constraints that can help resolve ambiguities and also extract implicit connections. Further such knowledge can also provide effective guidance for producing effective summaries. 
 
-Most information extraction systems target binary relations hat were explicitly mentioned in texts and cannot account for the implicit or inferred relations easily. Even within the explicitly expressed relations, many closed-domain IE systems can only extract a small set of manually pre-specified relations limiting their use to a small number of domains. On the other hand, Open IE systems extract every possible relation explicitly stated in text and do not have any notion of salience or importance to the main events in the discourse. Furthermore, binary relations do not capture the complexity of events that have multiple actors who perform specific roles within the event. 
+Existing state-of-the-art information systems do not have access to this kind of open-domain knowledge.
+For example, Open information extraction (Open IE) systems extract {\em every} possible binary relation explicitly stated in text because they do not have any notion of salience. Moreover, most events and scenarios involve multiple participants with specific roles that are not effectively represented by binary relations. 
 
-To effectively address these issues, extraction systems need background knowledge that provide models or expectations for the information they need to extract. For example models of salient aspects of certain types of entities (e.g., actors {\em act in} movies, actors {\em win} awards) can help extract and organize information about people. Similarly, rich descriptions of events or scenarios, processes and their interactions can help in extracting and understanding information about events from texts. Scalable methods for acquiring such background knowledge is essential for building broad coverage extractors.
-
-Template-driven extraction aims to address these issues by pre-specifying an extraction template for each event type (e.g., arrest, arson, bombing). The template describes an event type in terms of the actors and the roles they play within the event. Figure~\ref{fig:arrest} shows an example arrest template (or schema).  
-\begin{wrapfigure}{lh}{0.4\textwidth}
+Template-driven extraction aims to address these issues by pre-specifying an extraction template or a schema for each event type (e.g., arrest, arson, bombing). 
+The schema describes an event type in terms of the actors and the roles they play within the event. %Figure~\ref{fig:arrest} shows an example.  
+\eat{\begin{wrapfigure}{lhb}{0.5\textwidth}
 	\vspace{-2ex}
 	\begin{center}
-	\includegraphics[width=2.5in,height=2in]{figures/arrest-scenario} 	
+	\includegraphics[width=1.5in,height=1in]{figures/arrest-schema} 	
 	\caption{\label{fig:arrest} {Arrest schema: A model for an arrest scenario with the key actors and their roles.}}
+	\vspace{-3ex}
 	\end{center}
-\end{wrapfigure}
-The key actors are an arresting agent who arrests and charges a suspect, a lawyer who represents the suspect and a judge who rules on the case. 
+\end{wrapfigure}}
+For example, the key participants in a arrest event are an arresting agent who arrests and charges a suspect, a lawyer and a judge who rules on the case. However, template-based information extraction has been largely limited to a handful of domains. Prior automatic methods for generating event schemas~\cite{chambers-acl09} suffer from coherence issues -- mixing distinct events (e.g, fire spreading vs. disease spreading). 
 
-However, templates are fundamentally limited by the cost of manual authoring. Chambers and Jurafsky (2009) developed an automatic method for generating event schemas that scaled to arbitrary domains but used a simple representation that resulted in schemas that were mostly incoherent because they mixed distinct events (e.g., fire spreading vs. disease spreading). 
+The lack of event schemas covering a broad range of domains and the difficulty of acquiring them manually is a fundamental challenge in scaling event extraction. 
 
-In this work, we target extraction of rich schemas that describe events using a range of information as shown in the table below.
+%Chambers and Jurafsky (2009) developed an automatic method for generating event schemas that scaled to arbitrary domains but used a simple representation that resulted in schemas that were mostly incoherent because they mixed distinct events (e.g., fire spreading vs. disease spreading). 
 
+\subsection{Proposal}
+In this work, I propose to tackle the main challenges in schema-based event extraction by developing methods for automatically generating event schemas and produce a large scale curated collection of schemas to promote further research. In particular, I will target generation of schemas that specify the participants (actors) and their roles via generalized relations with semantically typed arguments. Figure~\ref{fig:drug-schema} shows an example that represents information about a scenario where a player gets suspended for taking a drug. The key participants include the player, the drug used, the test they failed and the punishment. The relations indicate the roles the participants play.  
+
+First, I will develop representations and algorithms for automatically generating open-domain event schemas. I will investigate corpus-based techniques that exploit relation co-occurrence to identify generalized relations that belong in a schema. This involves handling significant research challenges in a) generating effective representations while also addressing the resulting sparsity issues, and b) building effective graph-based algorithms that can identify clusters of co-mentioned relations. Second, I will also develop techniques to build extractors using these event schemas. The main scope of this activity is to keep the schema generation effort grounded in this end task and to demonstrate the feasibility of open-domain event extraction, Third, I propose to create a large scale curated collection of automatically generated open-domain event schemas (~10K) and an event extraction dataset.
+\begin{figure}[thb]
+	\begin{center}
+	\includegraphics[width=5.7in,height=2.5in]{figures/drug-schema} 	
+	\caption{\label{fig:drug-schema} {Drug Suspension Schema, which specifies the participants (actors) involved and their roles. The square boxes represent the participants. The semantic types of the participants are shown by their side along with some example instances for each participant.}}
+	\vspace{-2ex}
+	\end{center}
+\end{figure}
+%The key research challenges include designing an effective representation -- There is an inherent trade-off in choosing a the smallest units to use for representing information about events. Include more contexts reduces ambiguity but also increases sparsity. Representations that are closer to text provide less generalization power due to syntactic and lexical variability.
+%\item Schema Generation -- Determining the starting points for building good schemas, and 
+%\item 
+%\end{enumerate}
+
+
+\subsection{Contributions}
+The proposal builds upon the initial results and key findings in our prior work for automatically generating coherent event schemas~\cite{balasubramanian-akbc12,balasubramanian2013generating}. Exploiting recent advances in relation extraction technology, as well as large scale resources (e.g., NELL, Freebase), I will target automatic generation of high quality event schemas and release large scale datasets to further event extraction research. 
+
+Successful completion of the proposed activities will make the following technical contributions:
+\begin{itemize}[noitemsep,nolistsep]
+\item An effective representation for events that reduces ambiguity and techniques to address sparsity.
+\item Graph-based approaches that use graphical properties to address topic-drift in order to produce high-quality schemas.
+\item Effective bootstrapping techniques for building extractors for schema elements.
+\item  A large scale collection of manually curated open-domain schemas and large scale evaluation data set for event extraction that covers a wide range of domains.
+\end{itemize}
+\newpage
+
+
+\eat{
+In this work, we target extraction of rich event schemas that describe events using a range of information as shown in the table below.
 \begin{table}[htdp]
 \caption{default}
 \begin{center}
@@ -71,17 +104,16 @@ Related Scripts & \\
 \label{default}
 \end{table}%
 
+}
 
-In preliminary work, we generated {\em coherent} event schemas for arbitrary domains. It leveraged the scalability of Open Information Extraction to produce a representation that included more context and used a simple generalization of the arguments to address sparsity. 
+
+%To effectively address these issues, extraction systems need background knowledge that provide models or expectations for the information they need to extract. For example models of salient aspects of certain types of entities (e.g., actors {\em act in} movies, actors {\em win} awards) can help extract and organize information about people. Similarly, rich descriptions of events or scenarios, processes and their interactions can help in extracting and understanding information about events from texts. Scalable methods for acquiring such background knowledge is essential for building broad coverage extractors.
 
 %These open-domain event schemas are but a starting point for aggregating and organizing background knowledge about events that can be leveraged during extraction. The main goal of this project is to build open-domain script like knowledge about events. 
 
-Script-like knowledge serve as general purpose description of events or scenarios. In addition to the key actors, their actions, we will build scripts that include causal, temporal and dependency relationships between the different actions. During extraction this richer representation will enable us to infer more than what is explicitly mentioned in the text. 
+%Script-like knowledge serve as general purpose description of events or scenarios. In addition to the key actors, their actions, we will build scripts that include causal, temporal and dependency relationships between the different actions. During extraction this richer representation will enable us to infer more than what is explicitly mentioned in the text. 
 
-Schemas provide a high precision model of scenarios which can be expanded to associated extractors -- i.e., patterns that can be used to extract from new texts. Resolving entity and event co-references. Third, scripts must include causal and temporal ordering of the actions in a scenario. 
+%Schemas provide a high precision model of scenarios which can be expanded to associated extractors -- i.e., patterns that can be used to extract from new texts. Resolving entity and event co-references. Third, scripts must include causal and temporal ordering of the actions in a scenario. 
 
-\subsection{Research Challenges}
-
-
-
-\subsection{Contributions}
+%\subsection{Research Challenges}
+%\subsection{Contributions}
